@@ -23,6 +23,14 @@ the agent.
 
 ![A fresh Trilium Symbiont after /sb-init: _README and _Schema, then the spaces Daily, Cockpit, Hubs and Sources in the note tree](docs/img/symbiont-tree.png)
 
+The Kanban Board in Cockpit holds a clone of every task; its columns are yours to change:
+
+![The Kanban Board in Cockpit with the columns open, doing and blocked and one task card](docs/img/kanban-board.png)
+
+A day note in Daily, created from the Day template; captures become its child notes:
+
+![A day note under Daily / 2026 / 2026-W46 with the sections Meetings, Time tracking, Notes and Decisions](docs/img/day-note.png)
+
 You **capture** during the day, **triage** into hubs, let the agent **ingest** sources into syntheses
 and **query** the system; the tree stays yours — the agent proposes, you decide. The full user guide,
 with every command and example, is the `_README` note in your Trilium; you can also read it here:
@@ -44,6 +52,7 @@ with every command and example, is the `_README` note in your Trilium; you can a
 | `scripts/install.sh` · `scripts/install.ps1` | Installs the skills and the steering for Kiro and/or Claude Code as links (bash / PowerShell, no other runtime). See *Installing*. |
 | `scripts/shared-assets.json` | Which skill uses which file of another skill (today: the templates of `sb-init`). Read by both script pairs. |
 | `.github/workflows/check.yml` | CI on every push and pull request: both check twins, both build twins (identical ZIPs), the bash installer on Linux and the PowerShell installer on Windows. |
+| `.github/workflows/release.yml` | When a GitHub release is published: builds the Claude Desktop ZIPs from its tag and attaches them to the release. |
 | `CHANGELOG.md` | What changed in each release and what you have to do to upgrade. |
 | `docs/adr/` | Architecture decision records: why the non-obvious rules in `AGENTS.md` are the way they are. |
 | `docs/img/` | Screenshots used in this README and in `docs/install.md`. |
@@ -126,7 +135,8 @@ Install Trilium Symbiont from this repository for the AI client you are running 
 ```
 
 **Without an agent** — or with **Claude Desktop**, which can't run scripts and installs the skills as ZIP
-uploads: every step by hand, per client and OS, is in [docs/install.md](docs/install.md).
+uploads: every step by hand, per client and OS, is in [docs/install.md](docs/install.md). Claude Desktop
+needs no clone: download the skill ZIPs from the [latest release](https://github.com/chaeller/trilium-symbiont/releases/latest).
 
 ### First run
 
@@ -148,8 +158,9 @@ Update Trilium Symbiont from this repository.
 3. If skills were added or removed, run the install script for my OS and client with the dry-run
    option first, and for real only after I confirm. Do not create or delete links yourself.
 4. Run /sb-sync and walk me through its report; apply only what I confirm.
-5. If I also use Claude Desktop: tell me which skill ZIPs to rebuild (scripts/build_dist.py or
-   scripts/build_dist.mjs) and re-upload, and whether my project instructions need the new steering.
+5. If I also use Claude Desktop: tell me which skill ZIPs to re-upload (from the latest GitHub
+   release, or rebuilt with scripts/build_dist.py or scripts/build_dist.mjs), and whether my project
+   instructions need the new steering.
 6. If the steering changed, tell me to start a new session. Then run /sb-lint.
 ```
 

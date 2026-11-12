@@ -10,6 +10,15 @@ All notable changes to Trilium Symbiont. The version is the system version `#sbV
 Each release lists what changed and, under **Upgrade**, what you have to do. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Changed
+- **Claude Desktop ZIPs on every release:** publishing a GitHub release builds the 12 skill ZIPs from its tag
+  and attaches them (`.github/workflows/release.yml`). Claude Desktop users download them and need no clone
+  or build; `docs/install.md` (section C) and the README point there.
+- **README:** screenshots of the Kanban Board and a day note.
+- **CI:** current major versions of the GitHub actions (Node 24 runtime) and Node 24 for the Node twins.
+
 ## [1.0.0] — 2026-11-12
 
 **Initial release.** Trilium Symbiont turns a Trilium instance into an agent-assisted personal knowledge

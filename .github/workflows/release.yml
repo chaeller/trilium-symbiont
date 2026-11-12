@@ -1,0 +1,35 @@
+name: release
+
+# When a release is published on GitHub, build the Claude Desktop skill ZIPs from the release's tag and
+# attach them to it, so Desktop users need neither a clone nor a build.
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  zips:
+    name: Attach the Claude Desktop ZIPs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.release.tag_name }}
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Check the rules in AGENTS.md
+        run: python3 scripts/check_repo.py
+
+      - name: Build the ZIPs
+        run: python3 scripts/build_dist.py
+
+      - name: Attach them to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$TAG" dist/*.zip --clobber

@@ -211,7 +211,12 @@ done
    `steering/trilium-symbiont.md` (without the front-matter) into its **project instructions**. Chats
    in that project then get the routing rules. (Personal preferences under Settings → Profile also work,
    but apply to every chat.)
-3. **Skills** — Claude Desktop installs skills as ZIP uploads (code execution must be enabled). Build one
+3. **Skills** — Claude Desktop installs skills as ZIP uploads (code execution must be enabled).
+
+   **Download** (no clone, no build): every [release](https://github.com/chaeller/trilium-symbiont/releases/latest) has the 12 skill ZIPs
+   attached, built from that release by `.github/workflows/release.yml`.
+
+   **Or build them yourself** (from a clone, e.g. for changes not yet released): one
    ZIP per skill, each containing its folder (the `sb-init` ZIP thereby includes its `assets/`; the
    `sb-daily` and `sb-hub` ZIPs also get the templates they share with `sb-init`), with
    the build script — `build_dist.mjs` (Node ≥ 18; Node is already needed for `mcp-remote`) or its twin
@@ -230,13 +235,14 @@ done
    node scripts/build_dist.mjs             # all skills (or: python3 scripts/build_dist.py)
    node scripts/build_dist.mjs sb-daily    # only the named ones
    ```
-   **Install:** upload every ZIP from `dist/` under **Settings → Skills**. If you uploaded `sb-*` skills
+   **Install:** upload every ZIP (downloaded, or from `dist/`) under **Settings → Skills**. If you uploaded `sb-*` skills
    there before, **delete the old ones first** — otherwise the old and the new version sit side by side.
    Claude Desktop picks a skill from its description; you can also name it explicitly
    (*"use sb-triage"*).
 
-   **Update:** after changing a skill (its `SKILL.md` or `assets/`), rebuild its ZIP, delete the old
-   skill in Settings → Skills and upload the new ZIP — Desktop does not see repo changes.
+   **Update:** for a new release, download its ZIPs; after changing a skill yourself (its `SKILL.md` or
+   `assets/`), rebuild its ZIP. Then delete the old skill in Settings → Skills and upload the new ZIP —
+   Desktop does not see repo changes.
 
 ## D — Build the skeleton and verify (new instance)
 
@@ -263,7 +269,8 @@ git pull
   install script when a release adds or removes a skill.
 - **Your Trilium instance:** run **`/sb-sync`**. It shows how the rulebooks, templates and icons differ
   from the repo and applies only what you confirm (same major version; it never writes live → repo).
-- **Claude Desktop** holds copies: rebuild the ZIPs and re-upload the changed skills (section C, step 3),
+- **Claude Desktop** holds copies: download the release's ZIPs (or rebuild them) and re-upload the
+  changed skills (section C, step 3),
   and update the project instructions if the steering changed (section C, step 2).
 - If the steering changed, start a new session; then run `/sb-lint`.
 

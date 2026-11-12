@@ -58,7 +58,8 @@ Decision records with the reasoning: `docs/adr/`. A rule whose reason is not obv
 2. Keep `README.md` and `docs/install.md` consistent with changed skills, rulebooks or scripts. Add every
    user-visible change to `CHANGELOG.md` under `## [Unreleased]` at the top (create that section if it does
    not exist yet), with an **Upgrade** note when the user has to act (`/sb-sync`, re-run the install
-   script, rebuild ZIPs, newer Trilium). On release, rename it to `## [x.y.z] — YYYY-MM-DD`.
+   script, rebuild ZIPs, newer Trilium). On release, rename it to `## [x.y.z] — YYYY-MM-DD`; publishing the
+   GitHub release `vx.y.z` attaches the Desktop ZIPs (`.github/workflows/release.yml`).
 3. Changed a rulebook or template in `skills/sb-init/assets/`? Bump minor/patch of `#sbVersion` in
    `skeleton.md` and the umbrella `_Schema` together when needed; a major bump needs the user's OK.
 4. Changed a skill? Rebuild its Desktop ZIP with `build_dist.py` or `build_dist.mjs` (`<sb-name …>`) and tell the
