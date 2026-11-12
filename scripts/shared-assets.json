@@ -1,0 +1,4 @@
+{
+  "sb-daily": { "from": "sb-init", "files": ["templates/day.md", "templates/week.md"] },
+  "sb-hub": { "from": "sb-init", "files": ["templates/hub.md", "templates/synthesis.md"] }
+}

@@ -1,0 +1,16 @@
+# Build output (Claude Desktop skill ZIPs)
+dist/
+*.zip
+
+# Internal, not published
+kiro-conversation.json
+kiro-conversation.zip
+
+# Local client settings
+.claude/settings.local.json
+.kiro/
+
+# OS / editor clutter
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,91 @@
+name: check
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  repo:
+    name: Rules, twins and build (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Check the rules in AGENTS.md (Python twin)
+        run: python3 scripts/check_repo.py
+
+      - name: Check the rules in AGENTS.md (Node twin)
+        run: node scripts/check_repo.mjs
+
+      - name: Both check twins give the same output on a broken copy (D23)
+        run: |
+          work="$(mktemp -d)"
+          cp -r scripts skills steering docs README.md AGENTS.md CHANGELOG.md "$work/"
+          cd "$work"
+          printf '\nUses $ARGUMENTS and #sbSecret.\n' >> skills/sb-capture/SKILL.md
+          sed -i 's/(ADR 0001)/(ADR 0999)/' AGENTS.md
+          python3 scripts/check_repo.py > py.out && exit 1 || true
+          node scripts/check_repo.mjs > js.out && exit 1 || true
+          diff py.out js.out
+          grep -q 'ADR 0999' py.out
+
+      - name: Both build twins produce the same ZIPs (D23)
+        run: |
+          node scripts/build_dist.mjs
+          mv dist dist-node
+          python3 scripts/build_dist.py
+          python3 - <<'PY'
+          import pathlib, sys, zipfile
+          a, b = pathlib.Path("dist-node"), pathlib.Path("dist")
+          names = sorted(p.name for p in a.glob("*.zip"))
+          assert names == sorted(p.name for p in b.glob("*.zip")), "different ZIP sets"
+          for n in names:
+              za, zb = zipfile.ZipFile(a / n), zipfile.ZipFile(b / n)
+              assert za.testzip() is None and zb.testzip() is None, n
+              ca = [(i.filename, za.read(i)) for i in za.infolist()]
+              cb = [(i.filename, zb.read(i)) for i in zb.infolist()]
+              assert ca == cb, f"{n} differs"
+          print(f"{len(names)} ZIPs identical")
+          PY
+
+      - name: Install script (bash) in a scratch home
+        run: |
+          bash -n scripts/install.sh
+          export HOME="$(mktemp -d)"
+          scripts/install.sh --kiro --claude-code --dry-run
+          scripts/install.sh --kiro --claude-code
+          scripts/install.sh --kiro --claude-code | grep -c '^  ok' | grep -qx 26
+          test -L "$HOME/.claude/skills/sb-init" && test -L "$HOME/.kiro/steering/trilium-symbiont.md"
+          grep -q 'steering/trilium-symbiont.md' "$HOME/.claude/CLAUDE.md"
+
+  windows:
+    name: Install script (PowerShell, Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dry run, real run, second run (Windows PowerShell 5.1)
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          foreach ($extra in @('-DryRun', '', '')) {
+            $psArgs = @('-ExecutionPolicy', 'Bypass', '-File', 'scripts\install.ps1', '-Kiro', '-ClaudeCode')
+            if ($extra) { $psArgs += $extra }
+            powershell @psArgs
+            if ($LASTEXITCODE -ne 0) { throw "install.ps1 $extra failed with exit code $LASTEXITCODE" }
+          }
+          $link = Get-Item (Join-Path $HOME '.claude\skills\sb-init') -Force
+          if ($link.LinkType -ne 'Junction') { throw "sb-init is not a junction: $($link.LinkType)" }
+          if (-not (Test-Path (Join-Path $link.FullName 'SKILL.md'))) { throw 'junction target has no SKILL.md' }
+          $md = Get-Content (Join-Path $HOME '.claude\CLAUDE.md') -Raw
+          if ($md -notmatch 'steering/trilium-symbiont\.md') { throw 'CLAUDE.md import missing' }
+          if (-not (Test-Path 'skills\sb-init\SKILL.md')) { throw 'repo skill folder was damaged' }
+          Write-Host 'install.ps1 OK'

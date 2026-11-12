@@ -1,0 +1,4 @@
+# Text files are stored and checked out with LF on every OS (Kiro on Windows included).
+* text=auto eol=lf
+*.zip binary
+*.png binary
