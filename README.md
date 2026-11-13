@@ -9,6 +9,9 @@ an initial note structure and a rulebook so the agent can capture, compile and *
 efficiently — inspired by [Andrej Karpathy's LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
 (immutable sources → compiled synthesis → index, log, lint).
 
+**Talk "Knowledge Management and AI":** why I built it and how it works, in nine slides:
+[video on YouTube](https://youtu.be/nvF2ss6KoSg) · [slides (PDF)](docs/knowledge-management-and-ai.pdf).
+
 ## How it works
 
 Four **spaces** sit directly under the Trilium root, next to two system notes, `_README` (the user guide)
@@ -57,6 +60,7 @@ with every command and example, is the `_README` note in your Trilium; you can a
 | `docs/adr/` | Architecture decision records: why the non-obvious rules in `AGENTS.md` are the way they are. |
 | `docs/img/` | Screenshots used in this README and in `docs/install.md`. |
 | `docs/install.md` | Every install step by hand: token, MCP server, steering and skills per client, Claude Desktop ZIPs, skeleton build, upgrades. |
+| `docs/knowledge-management-and-ai.pdf` | Slides of the talk "Knowledge Management and AI" ([video on YouTube](https://youtu.be/nvF2ss6KoSg)). |
 | `steering/trilium-symbiont.md` | Always-on steering: natural-language routing + scope + the status-marker rule. |
 
 **Every script exists twice — in Python and in Node** — with the same behavior and output, so you need
